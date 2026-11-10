@@ -1,0 +1,33 @@
+# ======================================================================================================================
+# WARNING: UNVERIFIED VALUES. Every platform below carries `verified: false`.
+#  * All peak_gflops / efficiency numbers were copied from the legacy script
+#    Final_code/ablation/other/latency.py (dictionary target_hardware, section "5. Project to Target OBC Hardware").
+#    They were NOT re-checked against vendor data sheets (peak figures of rad-hard parts are often vendor marketing or
+#    estimates, and "efficiency" is an assumption, not a measurement).
+#  * NAME MISMATCH: the paper names "BAE RAD45"; the legacy script (and this file) says "BAE RAD5545". Decide which
+#    platform the paper means before citing a row.
+#  * The paper's latency table (Table latency_compact) does NOT agree with these values: back-solving its latencies with
+#    F = 9.28e7 FLOPs and efficiency 0.5 gives different peaks (e.g. 5015 / 1031 / 395 GFLOPS for the first three
+#    platforms). Decide which set the paper cites.
+#  * The projection is theoretical (flops / (efficiency * peak)); no measurement on any of these devices was made.
+# Numbers below are unchanged from the legacy script.
+# ======================================================================================================================
+#
+# On-board-computer platforms for the theoretical latency projection (scripts/complexity.py --project).
+#
+# latency_ms = flops / (efficiency * peak_gflops * 1e9) * 1e3   (atandn/evaluation/projection.py)
+#
+decision_period_s: 1.0     # "conservative 1 Hz decision rate" of the paper
+realtime_fraction: 0.5     # class rule inferred from the paper's table, see projection.py
+
+platforms:
+  - {name: "NVIDIA Jetson AGX Orin", type: Accelerator, peak_gflops: 5300.0, efficiency: 0.70, verified: false, source: "legacy latency.py target_hardware, gflops 5300.0, efficiency 0.70 (from legacy script, vendor value not re-verified)"}
+  - {name: "NVIDIA Jetson TX2i", type: Accelerator, peak_gflops: 1260.0, efficiency: 0.60, verified: false, source: "legacy latency.py target_hardware, gflops 1260.0, efficiency 0.60 (from legacy script, vendor value not re-verified)"}
+  - {name: "Intel Movidius Myriad X", type: Accelerator, peak_gflops: 500.0, efficiency: 0.60, verified: false, source: "legacy latency.py target_hardware, gflops 500.0, efficiency 0.60 (from legacy script, vendor value not re-verified)"}
+  - {name: "Intel Movidius Myriad 2", type: Accelerator, peak_gflops: 150.0, efficiency: 0.60, verified: false, source: "legacy latency.py target_hardware, gflops 150.0, efficiency 0.60 (from legacy script, vendor value not re-verified)"}
+  - {name: "Xilinx Zynq UltraScale+", type: Hybrid, peak_gflops: 200.0, efficiency: 0.50, verified: false, source: "legacy latency.py target_hardware, gflops 200.0, efficiency 0.50 (from legacy script, vendor value not re-verified)"}
+  - {name: "Cobham Gaisler GR740", type: Rad-Hard, peak_gflops: 1.7, efficiency: 0.80, verified: false, source: "legacy latency.py target_hardware, gflops 1.7, efficiency 0.80 (from legacy script, vendor value not re-verified)"}
+  - {name: "BAE RAD5545", type: Flagship, peak_gflops: 3.7, efficiency: 0.80, verified: false, source: "legacy latency.py target_hardware, gflops 3.7, efficiency 0.80 (from legacy script, vendor value not re-verified; the paper calls it BAE RAD45)"}
+  - {name: "BAE RAD750", type: Flagship, peak_gflops: 0.24, efficiency: 0.90, verified: false, source: "legacy latency.py target_hardware, gflops 0.24, efficiency 0.90 (from legacy script, vendor value not re-verified)"}
+  - {name: "Airbus OSCAR (SCOC3)", type: Legacy, peak_gflops: 0.07, efficiency: 0.90, verified: false, source: "legacy latency.py target_hardware, gflops 0.07, efficiency 0.90 (from legacy script, vendor value not re-verified)"}
+  - {name: "Atmel AT697F (LEON2)", type: Legacy, peak_gflops: 0.023, efficiency: 0.90, verified: false, source: "legacy latency.py target_hardware, gflops 0.023, efficiency 0.90 (from legacy script, vendor value not re-verified)"}

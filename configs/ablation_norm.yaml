@@ -1,0 +1,15 @@
+# Study file for experiments/ablation/run_ablation.py (--study). It is NOT a mission config: do not pass it
+# to atandn.config.load_config. The mission and the frozen hyperparameters come from --config / --best-params.
+#
+# Normalization swap at the SAME position (after each encoder BatchNorm). norm_identity is the legacy
+# "Without BIGN": BIGN replaced by identity while the per-window z-score, BatchNorm1d and LayerNorm remain.
+description: BIGN versus alternative normalization layers
+variants:
+  - norm_bign
+  - norm_identity
+  - norm_layernorm
+  - norm_instancenorm
+  - norm_groupnorm
+  - norm_batchnorm
+  - norm_rmsnorm
+seeds: [100, 777, 2026]

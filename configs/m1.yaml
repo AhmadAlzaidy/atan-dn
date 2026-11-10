@@ -1,0 +1,65 @@
+# ATAN-DN, ESA-ADB Mission 1 (channels 41-46). All keys are documented in configs/README.md.
+# Mission defaults (model/train values) come from atandn/config.py; they are starting points, not tuned results.
+mission: m1
+name: m1
+
+paths:                         # placeholders, relative to the working directory; override with --data-root/--out-dir/--raw-dir
+  data_root: .
+  raw_dir: data/m1/raw         # raw ESA-ADB mission folder (prepare_data.py only)
+  out_dir: runs/m1
+
+data:
+  kind: esa
+  path: data/m1/all_telemetry_41_46.parquet
+  channel_start: 41
+  channel_end: 46
+  target_sampling_rate: 0.033
+  train_ratio: 0.5             # chronological 50/50 split
+  test_stride: 10
+  telecommand_dir: data/m1/raw   # raw ESA mission folder with telecommands.csv + telecommands/ (relative to the data root)
+  # telecommand_priorities: [3]   # optional: only telecommand types with these priorities
+
+model:
+  in_channels: 6
+  window_size: 300
+  conv_filters: [64, 192]
+  num_heads: 2
+  dropout: 0.32
+  inverse: exact
+  inverse_method: solve
+
+train:
+  seed: 42
+  lr: 0.00060
+  weight_decay: 2.0e-5
+  batch_size: 32
+  overlap: 0.79
+  use_weighted_sampling: false
+  use_augmentation: true
+  recon_weight: 0.35
+  pos_weight: 14.1
+  focal_gamma: 2.61
+  recon_score_weight: 0.33
+  label_smoothing: 0.05
+  val_metric: f1
+  val_fraction: 0.2           # validation block carved from the TRAINING split (event-aware)
+  val_min_events: 3           # wanted FULL anomalous events in the validation block (relaxed progressively down to 1, with a warning)
+  val_min_fit_fraction: 0.3   # a moved validation block must leave >= 30% of the training split for fitting
+
+eval:
+  normalizer: percentile
+  use_known_event_mask: true   # Stage 3 mask on
+  mask_source: telecommands    # paper text: [t_tc, t_tc + buffer] after training-selected telecommand types; buffer = P95 settling (training only). 'rare_events' = labels.csv Rare-Event rows
+  threshold_floor: none        # 'nominal_p99': tau = max(tau*, P99 of fit-part scores of normal windows) (label-free floor)
+  sensitive_threshold: 0.90
+  min_consecutive: 1           # Table 4 Noise filter: Disabled (min_consecutive=1)
+  threshold_method: grid       # F1-optimal on [0.05, 0.95], step 0.005, on the validation block of the training split
+  allow_train_threshold_fallback: false  # true: use fitting-part scores if the validation block has no positive (flagged)
+  mask_buffer_before_minutes: 0   # settling time: buffer AFTER each known event only
+  mask_buffer_after_minutes: 15.0 # Table 4: 15 mins stress-test buffer (~13% of 95th %ile settling 116 min)
+  point_adjustment: true       # Table 3: PA event scoring matching ESA-ADB Supplementary Table 9
+
+search:
+  n_trials: 75
+  seed: 42
+  n_startup_trials: 10

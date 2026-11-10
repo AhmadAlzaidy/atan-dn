@@ -1,0 +1,17 @@
+# Study file for experiments/ablation/run_ablation.py (--study). It is NOT a mission config: do not pass it
+# to atandn.config.load_config. The mission and the frozen hyperparameters come from --config / --best-params.
+#
+# Components, classification loss and decoder inverse. All variants use the same hyperparameters as "full".
+description: Component, loss and decoder-inverse ablations
+variants:
+  - full
+  - no_attention
+  - no_se
+  - classifier_only
+  - no_recon_score
+  - loss_bce
+  - loss_weighted_bce
+  - inv_exact_neumann
+  - inv_mirror
+  - inv_none
+seeds: [100, 777, 2026]

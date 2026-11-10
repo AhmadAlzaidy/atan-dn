@@ -1,0 +1,10 @@
+# Study file for experiments/ablation/run_ablation.py (--study). It is NOT a mission config: do not pass it
+# to atandn.config.load_config. The mission and the frozen hyperparameters come from --config / --best-params.
+#
+# Operational (Stage 3) ablation: "no_stage3" = raw alarms (no known-event mask, no spike filter). The threshold of
+# every variant is selected on the validation block for ITS OWN post-processing chain, so no_stage3 is re-tuned.
+description: Stage 3 ablation (raw alarms versus masked and spike-filtered alarms)
+variants:
+  - full
+  - no_stage3
+seeds: [100, 777, 2026]

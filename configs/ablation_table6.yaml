@@ -1,0 +1,15 @@
+# Study file for experiments/ablation/run_ablation.py (--study configs/ablation_table6.yaml).
+# Table 6 ablation study from the paper (M1 test telemetry across 3 random seeds: 100, 777, 2026).
+# Components evaluated:
+# 1. Normalization: BIGN (full) vs Standard Normalization (standard_norm)
+# 2. Attention: Multi-Head Attention (full) vs Convolutional Feed-Forward (conv_feedforward)
+# 3. Dual-Objective: Dual-Head (full) vs Classifier-Only (classifier_only)
+# 4. Post-Processing: Stage 3 Masking (full) vs Raw Alarms (raw_alarms)
+description: Table 6 component ablation study (M1 test telemetry across seeds 100, 777, 2026)
+variants:
+  - full
+  - standard_norm
+  - conv_feedforward
+  - classifier_only
+  - raw_alarms
+seeds: [100, 777, 2026]

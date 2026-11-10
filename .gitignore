@@ -1,0 +1,29 @@
+# data and artefacts
+/data/
+*.parquet
+*.csv
+*.pth
+*.pt
+*.ckpt
+*.log
+logs/
+runs/
+outputs/
+results/
+checkpoints*/
+memory_item/
+baseline_out/
+# python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+build/
+dist/
+*.egg-info/
+# environments and editors
+venv/
+.venv/
+env/
+.idea/
+.vscode/

@@ -1,0 +1,8 @@
+# Runtime dependencies. The lower bounds are the versions the code and tests were run with (Python 3.9, CPU).
+# Older versions were not tested.
+torch>=2.8.0
+numpy>=1.26
+pandas>=2.3
+pyarrow>=21.0
+optuna>=5.0
+pyyaml>=6.0

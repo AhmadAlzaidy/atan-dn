@@ -1,0 +1,60 @@
+# ATAN-DN, OPS-SAT: the nine channels are pivoted on the unique timestamps into ONE 9-channel stream (opssat_mode: multichannel).
+# opssat_mode: interleaved is the legacy univariate stream (in_channels 1). Keys: configs/README.md.
+mission: ops_sat
+name: ops_sat
+
+paths:
+  data_root: .
+  raw_dir: null                # not used: segments.csv is read directly
+  out_dir: runs/ops_sat
+
+data:
+  kind: opssat
+  path: data/ops_sat/segments.csv
+  train_ratio: 0.75            # chronological 75/25 split
+  test_stride: 10
+  opssat_mode: multichannel    # 'interleaved' = legacy single-feature stream (set model.in_channels: 1)
+
+model:
+  in_channels: 9               # nine ADCS telemetry channels (CADC0872--CADC0894)
+  window_size: 400
+  conv_filters: [64, 256]
+  num_heads: 2
+  dropout: 0.33
+  inverse: exact
+  inverse_method: solve
+
+train:
+  seed: 42
+  lr: 0.00099
+  weight_decay: 3.0e-5
+  batch_size: 64
+  overlap: 0.75
+  use_weighted_sampling: false
+  use_augmentation: true
+  recon_weight: 0.19
+  pos_weight: 4.7
+  focal_gamma: 1.29
+  recon_score_weight: 0.02
+  label_smoothing: 0.05
+  val_metric: f1
+  val_fraction: 0.2           # validation block carved from the TRAINING split (event-aware)
+  val_min_events: 3           # wanted FULL anomalous events in the validation block (relaxed progressively down to 1, with a warning)
+  val_min_fit_fraction: 0.3   # a moved validation block must leave >= 30% of the training split for fitting
+
+eval:
+  normalizer: percentile
+  use_known_event_mask: false  # no known-event schedule for OPS-SAT
+  threshold_floor: nominal_p99 # Table 4: Suppression = 0.0404 (99th percentile score threshold of nominal training data)
+  sensitive_threshold: 0.90
+  min_consecutive: 1           # spike filter length
+  threshold_method: grid       # F1-optimal on [0.05, 0.95], step 0.005, on the validation block of the training split
+  allow_train_threshold_fallback: false  # true: use fitting-part scores if the validation block has no positive (flagged)
+  mask_buffer_before_minutes: 0   # settling time: buffer AFTER each known event only
+  mask_buffer_after_minutes: null # null -> derived from the training split
+  point_adjustment: true       # Table 3: PA event scoring matching ESA-ADB Supplementary Table 9
+
+search:
+  n_trials: 75
+  seed: 42
+  n_startup_trials: 10
